@@ -15,7 +15,7 @@ cat <<"EOF"
  
 EOF
 }
-header_info
+#header_info
 echo -e "Loading..."
 APP="Technitium DNS"
 var_disk="2"
@@ -52,7 +52,7 @@ function default_settings() {
 }
 
 function update_script() {
-header_info
+#header_info
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP}"
 
