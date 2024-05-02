@@ -55,7 +55,7 @@ function default_settings() {
 }
 
 function update_script() {
-
+header_info
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP}"
 
@@ -71,7 +71,10 @@ msg_ok "Updated Successfully"
 exit
 }
 
-update_script
+
+start
+build_container
+description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${APP} should be reachable by going to the following URL.
