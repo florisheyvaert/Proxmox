@@ -42,7 +42,7 @@ spinner() {
     local spin_i=0
     printf "\e[?25l"
     while true; do
-        printf "..."
+        printf ""
         sleep 0.1
     done
 }
@@ -60,7 +60,7 @@ msg_ok() {
   if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID > /dev/null; then kill $SPINNER_PID > /dev/null; fi
   printf "\e[?25h"
   local msg="$1"
-  echo -e "${msg}"
+  echo -e "${msg}\n"
 }
 
 # This function displays a error message with a red color.
@@ -68,7 +68,7 @@ msg_error() {
   if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID > /dev/null; then kill $SPINNER_PID > /dev/null; fi
   printf "\e[?25h"
   local msg="$1"
-  echo -e "${msg}"
+  echo -e "${msg}\n"
 }
 
 # Check if the shell is using bash
