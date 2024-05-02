@@ -41,7 +41,6 @@ spinner() {
     local chars="/-\|"
     local spin_i=0
     while true; do
-        #printf ""
         sleep 0.1
     done
 }
