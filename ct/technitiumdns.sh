@@ -6,16 +6,16 @@ source <(curl -s https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/m
 # https://github.com/tteck/Proxmox/raw/main/LICENSE
 
 function header_info {
-cat <<"EOF"
-  ______          __          _ __  _                    ____  _   _______
- /_  __/__  _____/ /_  ____  (_) /_(_)_  ______ ___     / __ \/ | / / ___/
-  / / / _ \/ ___/ __ \/ __ \/ / __/ / / / / __  __ \   / / / /  |/ /\__ \ 
- / / /  __/ /__/ / / / / / / / /_/ / /_/ / / / / / /  / /_/ / /|  /___/ / 
-/_/  \___/\___/_/ /_/_/ /_/_/\__/_/\__,_/_/ /_/ /_/  /_____/_/ |_//____/  
+# cat <<"EOF"
+#   ______          __          _ __  _                    ____  _   _______
+#  /_  __/__  _____/ /_  ____  (_) /_(_)_  ______ ___     / __ \/ | / / ___/
+#   / / / _ \/ ___/ __ \/ __ \/ / __/ / / / / __  __ \   / / / /  |/ /\__ \ 
+#  / / /  __/ /__/ / / / / / / / /_/ / /_/ / / / / / /  / /_/ / /|  /___/ / 
+# /_/  \___/\___/_/ /_/_/ /_/_/\__/_/\__,_/_/ /_/ /_/  /_____/_/ |_//____/  
  
-EOF
+# EOF
 }
-#header_info
+header_info
 echo -e "Loading..."
 APP="Technitium DNS"
 var_disk="2"
@@ -52,7 +52,7 @@ function default_settings() {
 }
 
 function update_script() {
-#header_info
+header_info
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP}"
 
