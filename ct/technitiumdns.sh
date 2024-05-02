@@ -68,8 +68,6 @@ msg_ok "Updated Successfully"
 exit
 }
 
-update_script
-
 start
 build_container
 description
