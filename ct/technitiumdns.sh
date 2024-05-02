@@ -69,9 +69,10 @@ msg_ok "Updated Successfully"
 exit
 }
 
-start
-build_container
-description
+update_script
+#start
+#build_container
+#description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${APP} should be reachable by going to the following URL.
