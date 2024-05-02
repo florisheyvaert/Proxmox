@@ -150,7 +150,7 @@ echo_default() {
 
 # This function is called when the user decides to exit the script. It clears the screen and displays an exit message.
 exit-script() {
-  echo -e "⚠  User exited script \n"
+  echo -e "⚠  User exited script - abc \n"
   exit
 }
 
@@ -488,7 +488,7 @@ install_script() {
 start() {
   if command -v pveversion >/dev/null 2>&1; then
     if ! (whiptail --backtitle "Proxmox VE Helper Scripts" --title "${APP} LXC" --yesno "This will create a New ${APP} LXC. Proceed?" 10 58); then
-      echo -e "⚠  User exited script \n"
+      echo -e "⚠  User exited script - test \n"
       exit
     fi
     install_script
