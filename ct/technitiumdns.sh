@@ -53,7 +53,7 @@ function default_settings() {
 }
 
 function update_script() {
-header_info
+#header_info
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP}"
 
