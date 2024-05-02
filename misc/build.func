@@ -49,7 +49,7 @@ spinner() {
 # This function displays an informational message with a yellow color.
 msg_info() {
   local msg="$1"
-  echo -ne " ${msg}   "
+  echo -e " ${msg}   "
   spinner &
   SPINNER_PID=$!
 }
