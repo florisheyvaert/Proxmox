@@ -27,6 +27,7 @@ catch_errors() {
 
 # This function is called when an error occurs. It receives the exit code, line number, and command that caused the error, and displays an error message.
 error_handler() {
+  if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID > /dev/null; then kill $SPINNER_PID > /dev/null; fi
   printf "\e[?25h"
   local exit_code="$?"
   local line_number="$1"
@@ -37,23 +38,26 @@ error_handler() {
 
 # This function displays a spinner.
 spinner() {
-#    local chars="/-\|"
-#    local spin_i=0
-#    printf "\e[?25l"
-#    while true; do
-#        printf "\r \e[36m%s\e[0m" "${chars:spin_i++%${#chars}:1}"
-"        sleep 0.1
-"    done
+    local chars="/-\|"
+    local spin_i=0
+    printf "\e[?25l"
+    while true; do
+        printf "\r \e[36m%s\e[0m" "${chars:spin_i++%${#chars}:1}"
+        sleep 0.1
+    done
 }
 
 # This function displays an informational message with a yellow color.
 msg_info() {
   local msg="$1"
   echo -ne " ${HOLD} ${YW}${msg}   "
+  spinner &
+  SPINNER_PID=$!
 }
 
 # This function displays a success message with a green color.
 msg_ok() {
+  if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID > /dev/null; then kill $SPINNER_PID > /dev/null; fi
   printf "\e[?25h"
   local msg="$1"
   echo -e "${BFR} ${CM} ${GN}${msg}${CL}"
@@ -61,6 +65,7 @@ msg_ok() {
 
 # This function displays a error message with a red color.
 msg_error() {
+  if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID > /dev/null; then kill $SPINNER_PID > /dev/null; fi
   printf "\e[?25h"
   local msg="$1"
   echo -e "${BFR} ${CROSS} ${RD}${msg}${CL}"
@@ -69,6 +74,7 @@ msg_error() {
 # Check if the shell is using bash
 shell_check() {
   if [[ "$(basename "$SHELL")" != "bash" ]]; then
+    clear
     msg_error "Your default shell is currently not set to Bash. To use these scripts, please switch to the Bash shell."
     echo -e "\nExiting..."
     sleep 2
@@ -79,6 +85,7 @@ shell_check() {
 # Run as root only
 root_check() {
   if [[ "$(id -u)" -ne 0 || $(ps -o comm= -p $PPID) == "sudo" ]]; then
+    clear
     msg_error "Please run this script as root."
     echo -e "\nExiting..."
     sleep 2
@@ -116,6 +123,7 @@ ssh_check() {
     if whiptail --backtitle "Proxmox VE Helper Scripts" --defaultno --title "SSH DETECTED" --yesno "It's advisable to utilize the Proxmox shell rather than SSH, as there may be potential complications with variable retrieval. Proceed using SSH?" 10 72; then
       whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Proceed using SSH" "You've chosen to proceed using SSH. If any issues arise, please run the script in the Proxmox shell before creating a repository issue." 10 72
     else
+      clear
       echo "Exiting due to SSH usage. Please consider using the Proxmox shell."
       exit
     fi
@@ -150,7 +158,8 @@ echo_default() {
 
 # This function is called when the user decides to exit the script. It clears the screen and displays an exit message.
 exit-script() {
-  echo -e "⚠  User exited script - abc \n"
+  clear
+  echo -e "⚠  User exited script \n"
   exit
 }
 
@@ -455,6 +464,7 @@ advanced_settings() {
   if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "ADVANCED SETTINGS COMPLETE" --yesno "Ready to create ${APP} LXC?" 10 58); then
     echo -e "${RD}Creating a ${APP} LXC using the above advanced settings${CL}"
   else
+    clear
     header_info
     echo -e "${RD}Using Advanced Settings${CL}"
     advanced_settings
@@ -488,13 +498,16 @@ install_script() {
 start() {
   if command -v pveversion >/dev/null 2>&1; then
     if ! (whiptail --backtitle "Proxmox VE Helper Scripts" --title "${APP} LXC" --yesno "This will create a New ${APP} LXC. Proceed?" 10 58); then
-      echo -e "⚠  User exited script - test \n"
+      clear
+      echo -e "⚠  User exited script \n"
       exit
     fi
+    SPINNER_PID=""
     install_script
   fi
 
   if ! command -v pveversion >/dev/null 2>&1; then
+    SPINNER_PID=""
     update_script
   fi
 }
@@ -513,9 +526,9 @@ build_container() {
   TEMP_DIR=$(mktemp -d)
   pushd $TEMP_DIR >/dev/null
   if [ "$var_os" == "alpine" ]; then
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/misc/alpine-install.func)"
+    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/alpine-install.func)"
   else
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/misc/install.func)"
+    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/install.func)"
   fi
   export CACHER="$APT_CACHER"
   export CACHER_IP="$APT_CACHER_IP"
@@ -532,7 +545,6 @@ build_container() {
   export PCT_OSVERSION="$var_version"
   export PCT_DISK_SIZE="$DISK_SIZE"
   export PCT_OPTIONS="
-  export TERM=xterm
     -features $FEATURES
     -hostname $HN
     -tags proxmox-helper-scripts
@@ -546,7 +558,7 @@ build_container() {
     $PW
   "
   # This executes create_lxc.sh and creates the container and .conf file
-  bash -c "$(wget -qLO - https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/ct/create_lxc.sh)" || exit
+  bash -c "$(wget -qLO - https://raw.githubusercontent.com/tteck/Proxmox/main/ct/create_lxc.sh)" || exit
 
   LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
   if [ "$CT_TYPE" == "0" ]; then
@@ -608,14 +620,14 @@ http://dl-cdn.alpinelinux.org/alpine/latest-stable/community
 EOF'
     pct exec "$CTID" -- ash -c "apk add bash >/dev/null"
   fi
-  lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/install/$var_install.sh)" || exit
+  lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/tteck/Proxmox/main/install/$var_install.sh)" || exit
 
 }
 
 # This function sets the description of the container.
 description() {
   IP=$(pct exec "$CTID" ip a s dev eth0 | awk '/inet / {print $2}' | cut -d/ -f1)
-  pct set "$CTID" -description "<div align='center'><a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'><img src='https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/misc/images/logo-81x112.png'/></a>
+  pct set "$CTID" -description "<div align='center'><a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'><img src='https://raw.githubusercontent.com/tteck/Proxmox/main/misc/images/logo-81x112.png'/></a>
 
   # ${APP} LXC
 
