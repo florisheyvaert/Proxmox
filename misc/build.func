@@ -69,7 +69,6 @@ msg_error() {
 # Check if the shell is using bash
 shell_check() {
   if [[ "$(basename "$SHELL")" != "bash" ]]; then
-    clear
     msg_error "Your default shell is currently not set to Bash. To use these scripts, please switch to the Bash shell."
     echo -e "\nExiting..."
     sleep 2
@@ -80,7 +79,6 @@ shell_check() {
 # Run as root only
 root_check() {
   if [[ "$(id -u)" -ne 0 || $(ps -o comm= -p $PPID) == "sudo" ]]; then
-    clear
     msg_error "Please run this script as root."
     echo -e "\nExiting..."
     sleep 2
@@ -118,7 +116,6 @@ ssh_check() {
     if whiptail --backtitle "Proxmox VE Helper Scripts" --defaultno --title "SSH DETECTED" --yesno "It's advisable to utilize the Proxmox shell rather than SSH, as there may be potential complications with variable retrieval. Proceed using SSH?" 10 72; then
       whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Proceed using SSH" "You've chosen to proceed using SSH. If any issues arise, please run the script in the Proxmox shell before creating a repository issue." 10 72
     else
-      clear
       echo "Exiting due to SSH usage. Please consider using the Proxmox shell."
       exit
     fi
@@ -153,7 +150,6 @@ echo_default() {
 
 # This function is called when the user decides to exit the script. It clears the screen and displays an exit message.
 exit-script() {
-  clear
   echo -e "⚠  User exited script \n"
   exit
 }
@@ -459,7 +455,6 @@ advanced_settings() {
   if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "ADVANCED SETTINGS COMPLETE" --yesno "Ready to create ${APP} LXC?" 10 58); then
     echo -e "${RD}Creating a ${APP} LXC using the above advanced settings${CL}"
   else
-    clear
     header_info
     echo -e "${RD}Using Advanced Settings${CL}"
     advanced_settings
@@ -493,7 +488,6 @@ install_script() {
 start() {
   if command -v pveversion >/dev/null 2>&1; then
     if ! (whiptail --backtitle "Proxmox VE Helper Scripts" --title "${APP} LXC" --yesno "This will create a New ${APP} LXC. Proceed?" 10 58); then
-      clear
       echo -e "⚠  User exited script \n"
       exit
     fi
