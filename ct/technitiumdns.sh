@@ -5,8 +5,6 @@ source <(curl -s https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/m
 # License: MIT
 # https://github.com/tteck/Proxmox/raw/main/LICENSE
 
-echo test
-
 function header_info {
 cat <<"EOF"
   ______          __          _ __  _                    ____  _   _______
@@ -70,6 +68,7 @@ msg_ok "Updated Successfully"
 exit
 }
 
+update_script
 
 start
 build_container
