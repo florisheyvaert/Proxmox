@@ -5,6 +5,8 @@ source <(curl -s https://raw.githubusercontent.com/florisheyvaert/Proxmox/main/m
 # License: MIT
 # https://github.com/tteck/Proxmox/raw/main/LICENSE
 
+echo test
+
 function header_info {
 clear
 cat <<"EOF"
@@ -53,7 +55,7 @@ function default_settings() {
 }
 
 function update_script() {
-#header_info
+
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP}"
 
@@ -70,9 +72,6 @@ exit
 }
 
 update_script
-#start
-#build_container
-#description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${APP} should be reachable by going to the following URL.
