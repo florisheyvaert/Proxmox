@@ -54,7 +54,7 @@ function default_settings() {
 function update_script() {
 #header_info
 if [[ ! -d /etc/dns ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
-echo -e "Updating ${APP}"
+msg_info "Updating ${APP}"
 
 if ! dpkg -s aspnetcore-runtime-8.0 > /dev/null 2>&1; then
     wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
